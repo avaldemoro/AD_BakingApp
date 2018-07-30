@@ -32,7 +32,7 @@ public class RecipeListFragment extends Fragment {
     RecipeListFragment.OnRecipeClickListener mCallback;
 
     public interface OnRecipeClickListener {
-        void onRecipeSelected(int position);
+        void onRecipeSelected(Recipe recipe);
     }
 
     @Override
@@ -59,9 +59,9 @@ public class RecipeListFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        try {
-            mCallback = (OnRecipeClickListener)context;
-        }catch (ClassCastException e){
+        if (context instanceof OnRecipeClickListener) {
+            mCallback = (OnRecipeClickListener) context;
+        } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }

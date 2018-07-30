@@ -9,20 +9,29 @@ import android.util.Log;
 import android.widget.Toast;
 
 import co.asterv.ad_bakingapp.model.Recipe;
+import co.asterv.ad_bakingapp.utils.Constant;
 
 public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeClickListener {
-    RecipeDetailFragment recipeDetailFragment;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);
+
     }
 
     @Override
-    public void onRecipeSelected(int position) {
-        Log.e("TEXT", String.valueOf(position));
-        // Fetch the item to display from bundle
+    public void onRecipeSelected(Recipe recipe) {
+        Bundle bundle = new Bundle();
+        RecipeDetailFragment fragment = new RecipeDetailFragment ();
 
+        bundle.putParcelable(Constant.RECIPE_KEY, recipe);
+        fragment.setArguments (bundle);
+
+        final Intent intent = new Intent(this, RecipeDetailActivity.class);
+        intent.putExtras(bundle);
+
+        Log.e("Main Activity", String.valueOf (recipe.getRecipeName ()));
+
+        startActivity(intent);
     }
 }

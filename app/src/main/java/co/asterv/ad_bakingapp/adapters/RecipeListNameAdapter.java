@@ -3,16 +3,21 @@ package co.asterv.ad_bakingapp.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import co.asterv.ad_bakingapp.R;
 import co.asterv.ad_bakingapp.RecipeDetailActivity;
+import co.asterv.ad_bakingapp.RecipeDetailFragment;
 import co.asterv.ad_bakingapp.RecipeListFragment;
 import co.asterv.ad_bakingapp.model.Recipe;
+import co.asterv.ad_bakingapp.utils.Constant;
 
 public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAdapter.ViewHolder> {
     private static Recipe[] recipes;
@@ -42,14 +47,10 @@ public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAd
         holder.recipeNameTV.setText (String.valueOf(recipes[position].getRecipeName ()));
 
         holder.itemView.setOnClickListener (v -> {
-            Intent i = new Intent(context, RecipeDetailActivity.class);
-            i.putExtra("recipe", recipes[position]);
-            context.startActivity(i);
-
             if (null != listener) {
-                // Notify the active callbacks interface (the activity, if the
-                // fragment is attached to one) that an item has been selected.
-                listener.onRecipeSelected (position);
+                listener.onRecipeSelected (recipes[position]);
+
+                Log.e("List Name Adapter", String.valueOf(recipes[position].getRecipeName ()));
             }
         });
     }
