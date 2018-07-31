@@ -1,32 +1,24 @@
 package co.asterv.ad_bakingapp.adapters;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import co.asterv.ad_bakingapp.R;
-import co.asterv.ad_bakingapp.RecipeDetailActivity;
-import co.asterv.ad_bakingapp.RecipeDetailFragment;
 import co.asterv.ad_bakingapp.RecipeListFragment;
 import co.asterv.ad_bakingapp.model.Recipe;
-import co.asterv.ad_bakingapp.utils.Constant;
 
 public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAdapter.ViewHolder> {
     private static Recipe[] recipes;
     private TextView recipeNameTV;
     private Context context;
-    RecipeListFragment.OnRecipeClickListener listener;
+    RecipeListFragment.OnRecipeSelectedListener listener;
 
 
-    public RecipeListNameAdapter(Recipe[] recipes, Context context, RecipeListFragment.OnRecipeClickListener listener) {
+    public RecipeListNameAdapter(Recipe[] recipes, Context context, RecipeListFragment.OnRecipeSelectedListener listener) {
         this.context = context;
         this.recipes = recipes;
         this.listener = listener;
@@ -50,7 +42,7 @@ public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAd
             if (null != listener) {
                 listener.onRecipeSelected (recipes[position]);
 
-                Log.e("List Name Adapter", String.valueOf(recipes[position].getRecipeName ()));
+                //Log.e("List Name Adapter", String.valueOf(recipes[position].getRecipeName ()));
             }
         });
     }

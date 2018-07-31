@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,21 +30,28 @@ public class RecipeListFragment extends Fragment {
     private static RecyclerView.Adapter mRecipeAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Recipe[] recipes;
-    RecipeListFragment.OnRecipeClickListener mCallback;
+    OnRecipeSelectedListener mCallback;
 
-    public interface OnRecipeClickListener {
+    public interface OnRecipeSelectedListener {
         void onRecipeSelected(Recipe recipe);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnRecipeSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate view
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
+
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.DETAILS_TITLE);
 
         mRecipeRecyclerView = view.findViewById(R.id.recipeNameRecyclerView);
         mLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
@@ -53,24 +61,6 @@ public class RecipeListFragment extends Fragment {
 
         // Return view
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
-        if (context instanceof OnRecipeClickListener) {
-            mCallback = (OnRecipeClickListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach ();
-        mCallback = null;
     }
 
     private class RecipeAsyncTask extends AsyncTask<String, Void, Recipe[]> {
