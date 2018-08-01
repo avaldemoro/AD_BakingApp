@@ -41,8 +41,6 @@ public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAd
         holder.itemView.setOnClickListener (v -> {
             if (null != listener) {
                 listener.onRecipeSelected (recipes[position]);
-
-                //Log.e("List Name Adapter", String.valueOf(recipes[position].getRecipeName ()));
             }
         });
     }

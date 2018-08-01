@@ -1,6 +1,5 @@
 package co.asterv.ad_bakingapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,18 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.net.URL;
-
 import co.asterv.ad_bakingapp.adapters.RecipeListNameAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.utils.Constant;
@@ -51,7 +46,7 @@ public class RecipeListFragment extends Fragment {
         // Inflate view
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.DETAILS_TITLE);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.MAIN_TITLE);
 
         mRecipeRecyclerView = view.findViewById(R.id.recipeNameRecyclerView);
         mLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());

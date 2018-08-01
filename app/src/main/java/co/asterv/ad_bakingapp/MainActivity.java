@@ -1,15 +1,7 @@
 package co.asterv.ad_bakingapp;
 
-import android.content.ClipData;
-import android.content.Context;
-import android.content.Intent;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
-
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.utils.Constant;
 
@@ -24,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
         listFragment.setArguments (bundle);
 
         getSupportFragmentManager ().beginTransaction ()
-                .add (R.id.frame_container, listFragment)
+                .replace (R.id.frame_container, listFragment)
                 .commit ();
 
     }
