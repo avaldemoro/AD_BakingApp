@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,7 +36,6 @@ public class RecipeDetailFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         recipe = getArguments().getParcelable (Constant.RECIPE_KEY);
-        Log.e("Recipe Detail Fragment1", String.valueOf(recipe.getRecipeName ()));
 
         if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.DETAILS_TITLE);
@@ -58,6 +58,23 @@ public class RecipeDetailFragment extends Fragment{
         mIngredientsRecyclerView.setLayoutManager (mLayoutManager);
 
         new IngredientsAsyncTask ().execute ();
+
+        CardView cvIngredients = view.findViewById (R.id.ingredientsCardView);
+        view.findViewById(R.id.ingredientsRecyclerView).setVisibility(View.GONE);
+
+        cvIngredients.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.e("hi", "CLICKED!");
+
+                if (v.findViewById (R.id.ingredientsRecyclerView).getVisibility () == View.VISIBLE) {
+                    ((CardView)v).findViewById(R.id.ingredientsRecyclerView).setVisibility(View.GONE);
+                } else {
+                    ((CardView)v).findViewById(R.id.ingredientsRecyclerView).setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
 
         // Return view
         return view;
@@ -104,7 +121,6 @@ public class RecipeDetailFragment extends Fragment{
                 ingredientsData[j].setIngredientsName (ingredient.getString (Constant.INGREDIENT_NAME_KEY));
             }
         }
-
         return ingredientsData;
     }
 
