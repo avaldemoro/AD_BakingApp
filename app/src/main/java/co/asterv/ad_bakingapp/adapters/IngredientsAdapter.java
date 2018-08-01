@@ -5,21 +5,23 @@ import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import java.util.List;
 import co.asterv.ad_bakingapp.R;
-import co.asterv.ad_bakingapp.model.Recipe;
+import co.asterv.ad_bakingapp.model.Ingredient;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
     private Context context;
-    private static Recipe[] recipes;
+    private static List<Ingredient> ingredients;
     private TextView ingredientQuantityTV;
     private TextView ingredientNameTV;
     private TextView ingredientMeasureTV;
 
-    public IngredientsAdapter(Recipe[] recipes, Context context) {
+    public IngredientsAdapter(List<Ingredient> ingredients, Context context) {
         this.context = context;
-        this.recipes = recipes;
+        this.ingredients = ingredients;
     }
 
     @NonNull
@@ -33,17 +35,21 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull IngredientsAdapter.ViewHolder holder, int position) {
-        holder.ingredientQuantityTV.setText (String.valueOf (recipes[position].getIngredientsQuantity ()));
-        holder.ingredientMeasureTV.setText (recipes[position].getIngredientsMeasureType ());
-        holder.ingredientNameTV.setText (recipes[position].getIngredientsName ());
+        int quantity = (int) Math.round(ingredients.get (position).getIngredientsQuantity ());
+        String measureType = ingredients.get(position).getIngredientsMeasureType ();
+        String ingredientName = ingredients.get(position).getIngredientsName ();
+
+        holder.ingredientQuantityTV.setText (String.valueOf (quantity));
+        holder.ingredientMeasureTV.setText (measureType);
+        holder.ingredientNameTV.setText (ingredientName);
     }
 
     @Override
     public int getItemCount() {
-        if (recipes == null || recipes.length == 0) {
+        if (ingredients == null || ingredients.size () == 0) {
             return -1;
         }
-        return recipes.length;
+        return ingredients.size ();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

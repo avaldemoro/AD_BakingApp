@@ -3,24 +3,28 @@ package co.asterv.ad_bakingapp.model;
 import android.os.Parcelable;
 import android.os.Parcel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Recipe implements Parcelable {
     private String recipeName;
     private int recipeId;
-    private double ingredientsQuantity;
-    private String ingredientsMeasureType;
-    private String ingredientsName;
     private String steps;
     private int servings;
     private String imagePath;
+    private List<Ingredient> ingredients = null;
 
     public Recipe() { }
 
     protected Recipe(Parcel in) {
+        if (in.readByte() == 0x01) {
+            ingredients = new ArrayList<> ();
+            in.readList(ingredients, Ingredient.class.getClassLoader());
+        } else {
+            ingredients = null;
+        }
         recipeId = in.readInt ();
         recipeName = in.readString ();
-        ingredientsQuantity = in.readDouble ();
-        ingredientsMeasureType = in.readString ();
-        ingredientsName = in.readString ();
         steps = in.readString ();
         servings = in.readInt ();
         imagePath = in.readString ();
@@ -37,22 +41,19 @@ public class Recipe implements Parcelable {
     /*** SETTER METHODS ***/
     public void setRecipeName(String recipeName) { this.recipeName = recipeName; }
     public void setRecipeId(int recipeId) { this.recipeId = recipeId; }
-    public void setIngredientsQuantity(double ingredientsQuantity) { this.ingredientsQuantity = ingredientsQuantity; }
-    public void setIngredientsMeasureType(String ingredientsMeasureType) { this.ingredientsMeasureType = ingredientsMeasureType; }
-    public void setIngredientsName(String ingredientsName) { this.ingredientsName = ingredientsName; }
     public void setSteps(String steps) { this.steps = steps; }
     public void setServings(int servings) { this.servings = servings; }
     public void setImagePath(String imagePath) { this.imagePath = imagePath; }
+    public void setIngredients(List<Ingredient> ingredients) { this.ingredients = ingredients; }
+
 
     /*** GETTER METHODS ***/
     public String getRecipeName() { return recipeName; }
     public int getRecipeId() { return recipeId; }
-    public double getIngredientsQuantity() { return ingredientsQuantity; }
-    public String getIngredientsMeasureType() { return ingredientsMeasureType; }
-    public String getIngredientsName() { return ingredientsName; }
     public String getSteps() { return steps; }
     public int getServings() { return servings; }
     public String getImagePath() { return imagePath; }
+    public List<Ingredient> getIngredients() { return ingredients; }
 
     @Override
     public int describeContents() {
@@ -63,11 +64,15 @@ public class Recipe implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(recipeName);
         dest.writeInt (recipeId);
-        dest.writeDouble (ingredientsQuantity);
-        dest.writeString (ingredientsMeasureType);
-        dest.writeString (ingredientsName);
         dest.writeString (steps);
         dest.writeInt (servings);
         dest.writeString (imagePath);
+
+        if (ingredients == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(ingredients);
+        }
     }
 }

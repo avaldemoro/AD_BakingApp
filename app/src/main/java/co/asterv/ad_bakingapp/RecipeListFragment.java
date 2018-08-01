@@ -15,7 +15,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import co.asterv.ad_bakingapp.adapters.RecipeListNameAdapter;
+import co.asterv.ad_bakingapp.model.Ingredient;
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.utils.Constant;
 import co.asterv.ad_bakingapp.utils.JsonUtils;
@@ -25,6 +28,8 @@ public class RecipeListFragment extends Fragment {
     private static RecyclerView.Adapter mRecipeAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Recipe[] recipes;
+    private List<Ingredient> ingredientsList;
+    private Ingredient[] ingredients;
     OnRecipeSelectedListener mCallback;
 
     public interface OnRecipeSelectedListener {
@@ -89,6 +94,25 @@ public class RecipeListFragment extends Fragment {
             recipes[i].setRecipeName (recipe.getString(Constant.NAME_KEY));
             recipes[i].setRecipeId (recipe.getInt (Constant.ID_KEY));
             recipes[i].setServings (recipe.getInt (Constant.SERVINGS_KEY));
+
+            JSONArray ingredientsArray = recipe.getJSONArray(Constant.INGREDIENTS_KEY);
+            ingredients = new Ingredient[ingredientsArray.length ()];
+            ingredientsList = new ArrayList<Ingredient> ();
+            for (int j = 0; j < ingredientsArray.length(); j++) {
+
+                JSONObject ingredient = ingredientsArray.getJSONObject(j);
+
+                ingredients[j] = new Ingredient ();
+
+                ingredients[j].setIngredientsQuantity (ingredient.getDouble (Constant.INGREDIENTS_QUANTITY_KEY));
+                ingredients[j].setIngredientsMeasureType (ingredient.getString(Constant.INGREDIENTS_MEASURE_KEY).toLowerCase ());
+                ingredients[j].setIngredientsName (ingredient.getString (Constant.INGREDIENT_NAME_KEY));
+
+                ingredientsList.add(ingredients[j]);
+            }
+
+            recipes[i].setIngredients (ingredientsList);
+
         }
         return recipes;
     }
