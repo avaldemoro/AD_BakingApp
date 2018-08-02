@@ -9,7 +9,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
+
 import co.asterv.ad_bakingapp.adapters.IngredientsAdapter;
 import co.asterv.ad_bakingapp.adapters.StepsAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
@@ -63,11 +66,13 @@ public class RecipeDetailFragment extends Fragment{
 
         /*** SET UP STEPS RV ***/
         mStepsRecyclerView = view.findViewById (R.id.stepsRecyclerView);
+
         mStepsRecyclerView.setLayoutManager (mStepLayoutManager);
         //specify adapter
         mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext ());
         mStepsRecyclerView.setAdapter (mStepsAdapter);
         mStepsRecyclerView.setNestedScrollingEnabled (false);
+
 
 
         cvIngredients.setOnClickListener(v -> {
