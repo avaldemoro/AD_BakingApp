@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import co.asterv.ad_bakingapp.adapters.IngredientsAdapter;
+import co.asterv.ad_bakingapp.adapters.StepsAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.utils.Constant;
 
@@ -18,7 +19,10 @@ public class RecipeDetailFragment extends Fragment{
     private Recipe recipe;
     private static RecyclerView mIngredientsRecyclerView;
     private static RecyclerView.Adapter mIngredientsAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private static RecyclerView mStepsRecyclerView;
+    private static RecyclerView.Adapter mStepsAdapter;
+    private RecyclerView.LayoutManager mIngredientLayoutManager;
+    private RecyclerView.LayoutManager mStepLayoutManager;
 
     public RecipeDetailFragment() { }
 
@@ -42,19 +46,29 @@ public class RecipeDetailFragment extends Fragment{
         TextView tvRecipeServings = view.findViewById (R.id.servingsAmountTextView);
         CardView cvIngredients = view.findViewById (R.id.ingredientsCardView);
 
-
         tvRecipeTitle.setText (recipe.getRecipeName ());
         tvRecipeServings.setText (String.valueOf (recipe.getServings ()));
 
-        mIngredientsRecyclerView = view.findViewById (R.id.ingredientsRecyclerView);
-        mLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
-        mIngredientsRecyclerView.setLayoutManager (mLayoutManager);
-        view.findViewById(R.id.ingredientsRecyclerView).setVisibility(View.GONE);
+        mIngredientLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
+        mStepLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
 
+        /*** SET UP INGREDIENTS RV ***/
+        mIngredientsRecyclerView = view.findViewById (R.id.ingredientsRecyclerView);
+        mIngredientsRecyclerView.setLayoutManager (mIngredientLayoutManager);
+        view.findViewById(R.id.ingredientsRecyclerView).setVisibility(View.GONE);
         //specify adapter
         mIngredientsAdapter = new IngredientsAdapter (recipe.getIngredients (), getContext ());
         mIngredientsRecyclerView.setAdapter (mIngredientsAdapter);
         mIngredientsRecyclerView.setNestedScrollingEnabled (false);
+
+        /*** SET UP STEPS RV ***/
+        mStepsRecyclerView = view.findViewById (R.id.stepsRecyclerView);
+        mStepsRecyclerView.setLayoutManager (mStepLayoutManager);
+        //specify adapter
+        mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext ());
+        mStepsRecyclerView.setAdapter (mStepsAdapter);
+        mStepsRecyclerView.setNestedScrollingEnabled (false);
+
 
         cvIngredients.setOnClickListener(v -> {
             if (v.findViewById (R.id.ingredientsRecyclerView).getVisibility () == View.VISIBLE) {

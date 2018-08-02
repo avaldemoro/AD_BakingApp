@@ -20,6 +20,7 @@ import java.util.List;
 import co.asterv.ad_bakingapp.adapters.RecipeListNameAdapter;
 import co.asterv.ad_bakingapp.model.Ingredient;
 import co.asterv.ad_bakingapp.model.Recipe;
+import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 import co.asterv.ad_bakingapp.utils.JsonUtils;
 
@@ -30,6 +31,8 @@ public class RecipeListFragment extends Fragment {
     private Recipe[] recipes;
     private List<Ingredient> ingredientsList;
     private Ingredient[] ingredients;
+    private List<Step> stepsList;
+    private Step[] steps;
     OnRecipeSelectedListener mCallback;
 
     public interface OnRecipeSelectedListener {
@@ -95,11 +98,18 @@ public class RecipeListFragment extends Fragment {
             recipes[i].setRecipeId (recipe.getInt (Constant.ID_KEY));
             recipes[i].setServings (recipe.getInt (Constant.SERVINGS_KEY));
 
+            // INGREDIENTS
             JSONArray ingredientsArray = recipe.getJSONArray(Constant.INGREDIENTS_KEY);
             ingredients = new Ingredient[ingredientsArray.length ()];
             ingredientsList = new ArrayList<Ingredient> ();
-            for (int j = 0; j < ingredientsArray.length(); j++) {
 
+            // STEPS
+            JSONArray stepsArray = recipe.getJSONArray (Constant.STEPS_KEY);
+            steps = new Step[stepsArray.length ()];
+            stepsList = new ArrayList<Step> ();
+
+            // For loop for getting/setting ingredients
+            for (int j = 0; j < ingredientsArray.length(); j++) {
                 JSONObject ingredient = ingredientsArray.getJSONObject(j);
 
                 ingredients[j] = new Ingredient ();
@@ -111,7 +121,21 @@ public class RecipeListFragment extends Fragment {
                 ingredientsList.add(ingredients[j]);
             }
 
+            // For loop for getting/setting steps
+            for (int k = 0; k < stepsArray.length (); k++) {
+                JSONObject step = stepsArray.getJSONObject (k);
+
+                steps[k] = new Step();
+
+                steps[k].setStepId (step.getInt (Constant.ID_KEY));
+                steps[k].setStepLongDescription (step.getString (Constant.STEP_LONG_DESC_KEY));
+                steps[k].setStepShortDescription (step.getString (Constant.STEP_SHORT_DESC_KEY));
+
+                stepsList.add(steps[k]);
+            }
+
             recipes[i].setIngredients (ingredientsList);
+            recipes[i].setSteps (stepsList);
 
         }
         return recipes;
