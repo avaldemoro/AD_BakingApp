@@ -1,38 +1,29 @@
 package co.asterv.ad_bakingapp.adapters;
 
-import android.app.ActionBar;
 import android.content.Context;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.VideoView;
-
 import java.util.List;
 import co.asterv.ad_bakingapp.R;
+import co.asterv.ad_bakingapp.RecipeDetailFragment;
 import co.asterv.ad_bakingapp.model.Step;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> {
     private Context context;
     private static List<Step> steps;
     private TextView stepShortDescTV;
-    private TextView stepLongDescTV;
-    private VideoView stepVideoVV;
-    MediaController mediaController;
-    private FrameLayout stepVideoFL;
+    RecipeDetailFragment.OnStepSelectedListener listener;
 
-    public StepsAdapter(List<Step> steps, Context context) {
+    public StepsAdapter(List<Step> steps, Context context, RecipeDetailFragment.OnStepSelectedListener listener) {
         this.context = context;
         this.steps = steps;
-
+        this.listener = listener;
     }
 
     @NonNull
@@ -48,35 +39,15 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull StepsAdapter.ViewHolder holder, int position) {
-        String longDesc = steps.get(position).getStepLongDescription ();
         String shortDesc = steps.get(position).getStepShortDescription ();
-        String stepUrl = steps.get(position).getStepVideoUrl ();
+
         holder.stepShortDescTV.setText (shortDesc);
-        holder.stepLongDescTV.setText (longDesc);
 
-        mediaController = new MediaController (context);
-
-        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams (ActionBar.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT);
-
-        if (stepUrl.isEmpty ()) {
-            holder.stepVideoVV.setVisibility (View.GONE);
-            holder.stepVideoFL.setVisibility (View.GONE);
-        } else {
-            holder.stepVideoVV.setVideoURI (Uri.parse(stepUrl));
-            holder.stepVideoVV.seekTo(100);
-            holder.stepVideoVV.setMediaController (mediaController);
-
-            lp.gravity = Gravity.BOTTOM;
-            mediaController.setLayoutParams (lp);
-            ((ViewGroup) mediaController.getParent()).removeView(mediaController);
-            holder.stepVideoFL.addView (mediaController);
-            mediaController.setAnchorView (holder.stepVideoFL);
-
-            if (holder.stepVideoVV.isPlaying ()) {
-                mediaController.hide ();
+        holder.itemView.setOnClickListener (v -> {
+            if (null != listener) {
+                listener.onStepSelected (steps.get(position));
             }
-
-        }
+        });
     }
 
 
@@ -90,19 +61,11 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView stepShortDescTV;
-        TextView stepLongDescTV;
-        VideoView stepVideoVV;
-        FrameLayout stepVideoFL;
-
 
         public ViewHolder(View itemView) {
             super (itemView);
 
-            stepLongDescTV = itemView.findViewById (R.id.longDescTextView);
             stepShortDescTV = itemView.findViewById (R.id.shortDescTextView);
-            stepVideoVV = itemView.findViewById (R.id.stepVideoView);
-            stepVideoFL = itemView.findViewById (R.id.stepVideoFrameLayout);
-
         }
     }
 }

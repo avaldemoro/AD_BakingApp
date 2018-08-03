@@ -3,9 +3,10 @@ package co.asterv.ad_bakingapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import co.asterv.ad_bakingapp.model.Recipe;
+import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 
-public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeSelectedListener {
+public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeSelectedListener, RecipeDetailFragment.OnStepSelectedListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -33,7 +34,20 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
                 .replace (R.id.frame_container, fragment)
                 .addToBackStack (null)
                 .commit ();
+    }
 
+    @Override
+    public void onStepSelected(Step step) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable (Constant.STEP_KEY, step);
+        RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
+        fragment.setArguments (bundle);
+
+        getSupportFragmentManager ().addOnBackStackChangedListener (this::onBackStackChanged);
+        getSupportFragmentManager ().beginTransaction ()
+                .replace (R.id.frame_container, fragment)
+                .addToBackStack (null)
+                .commit ();
     }
 
     /***

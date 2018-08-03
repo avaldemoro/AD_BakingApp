@@ -1,5 +1,6 @@
 package co.asterv.ad_bakingapp;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import android.widget.VideoView;
 import co.asterv.ad_bakingapp.adapters.IngredientsAdapter;
 import co.asterv.ad_bakingapp.adapters.StepsAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
+import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 
 public class RecipeDetailFragment extends Fragment{
@@ -26,8 +28,23 @@ public class RecipeDetailFragment extends Fragment{
     private static RecyclerView.Adapter mStepsAdapter;
     private RecyclerView.LayoutManager mIngredientLayoutManager;
     private RecyclerView.LayoutManager mStepLayoutManager;
+    RecipeDetailFragment.OnStepSelectedListener mCallback;
+
 
     public RecipeDetailFragment() { }
+
+    public interface OnStepSelectedListener {
+        void onStepSelected(Step step);
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (RecipeDetailFragment.OnStepSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnArticleSelectedListener");
+        }
+    }
 
 
     @Override
@@ -69,7 +86,7 @@ public class RecipeDetailFragment extends Fragment{
 
         mStepsRecyclerView.setLayoutManager (mStepLayoutManager);
         //specify adapter
-        mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext ());
+        mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext (), mCallback);
         mStepsRecyclerView.setAdapter (mStepsAdapter);
         mStepsRecyclerView.setNestedScrollingEnabled (false);
 
