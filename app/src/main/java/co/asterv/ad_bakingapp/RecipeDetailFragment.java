@@ -10,12 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.VideoView;
-
 import java.util.List;
-
 import co.asterv.ad_bakingapp.adapters.IngredientsAdapter;
 import co.asterv.ad_bakingapp.adapters.StepsAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
@@ -55,15 +51,16 @@ public class RecipeDetailFragment extends Fragment{
         super.onCreate (savedInstanceState);
         recipe = getArguments().getParcelable (Constant.RECIPE_KEY);
 
-        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.DETAILS_TITLE);
-        }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate view
         View view = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
+        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.DETAILS_TITLE);
+        }
 
         TextView tvRecipeTitle = view.findViewById (R.id.recipeTitle);
         TextView tvRecipeServings = view.findViewById (R.id.servingsAmountTextView);

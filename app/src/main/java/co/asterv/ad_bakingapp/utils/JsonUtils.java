@@ -1,7 +1,6 @@
 package co.asterv.ad_bakingapp.utils;
 
 import android.net.Uri;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;

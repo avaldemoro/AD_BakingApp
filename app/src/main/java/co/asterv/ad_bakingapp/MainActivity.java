@@ -3,10 +3,8 @@ package co.asterv.ad_bakingapp;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
@@ -24,7 +22,6 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
         getSupportFragmentManager ().beginTransaction ()
                 .replace (R.id.frame_container, listFragment)
                 .commit ();
-
     }
 
     @Override
@@ -50,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
         RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
         fragment.setArguments (bundle);
 
-        getSupportFragmentManager ().addOnBackStackChangedListener (this::onBackStackChanged);
         getSupportFragmentManager ().beginTransaction ()
                 .replace (R.id.frame_container, fragment)
                 .addToBackStack (null)
@@ -68,8 +64,8 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
 
     public void shouldDisplayHomeUp(){
         //Enable Up button only  if there are entries in the back stack
-        boolean canback = getSupportFragmentManager().getBackStackEntryCount()>0;
-        getSupportActionBar().setDisplayHomeAsUpEnabled(canback);
+        boolean canBack = getSupportFragmentManager().getBackStackEntryCount()>0;
+        getSupportActionBar().setDisplayHomeAsUpEnabled(canBack);
     }
 
     @Override

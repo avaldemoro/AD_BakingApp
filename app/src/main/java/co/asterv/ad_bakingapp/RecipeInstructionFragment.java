@@ -12,16 +12,13 @@ import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
-
 import java.util.ArrayList;
-import java.util.List;
-
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 
 public class RecipeInstructionFragment extends Fragment {
     RecipeDetailFragment.OnStepSelectedListener mCallback;
-    private Step step, previousStep, nextStep;
+    private Step step;
     private ArrayList<Step> steps;
     private MediaController mediaController;
     VideoView vvStepVideo;
@@ -31,6 +28,12 @@ public class RecipeInstructionFragment extends Fragment {
 
     public RecipeInstructionFragment() { }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        // where mText is the title you want on your toolbar/actionBar
+        getActivity().setTitle(step.getStepShortDescription ());
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -48,12 +51,16 @@ public class RecipeInstructionFragment extends Fragment {
         step = getArguments().getParcelable (Constant.STEP_KEY);
         steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
 
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_instruction, container, false);
-
+        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
+            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (step.getStepShortDescription ());
+        }
         setUpInstructionFragUI (view, step);
 
         previousButton.setOnClickListener (v -> {
