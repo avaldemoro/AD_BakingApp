@@ -14,6 +14,8 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import java.util.List;
+
 import co.asterv.ad_bakingapp.adapters.IngredientsAdapter;
 import co.asterv.ad_bakingapp.adapters.StepsAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
@@ -34,8 +36,9 @@ public class RecipeDetailFragment extends Fragment{
     public RecipeDetailFragment() { }
 
     public interface OnStepSelectedListener {
-        void onStepSelected(Step step);
+        void onStepSelected(List<Step> steps, int position);
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -76,6 +79,7 @@ public class RecipeDetailFragment extends Fragment{
         mIngredientsRecyclerView = view.findViewById (R.id.ingredientsRecyclerView);
         mIngredientsRecyclerView.setLayoutManager (mIngredientLayoutManager);
         view.findViewById(R.id.ingredientsRecyclerView).setVisibility(View.GONE);
+
         //specify adapter
         mIngredientsAdapter = new IngredientsAdapter (recipe.getIngredients (), getContext ());
         mIngredientsRecyclerView.setAdapter (mIngredientsAdapter);
@@ -85,12 +89,11 @@ public class RecipeDetailFragment extends Fragment{
         mStepsRecyclerView = view.findViewById (R.id.stepsRecyclerView);
 
         mStepsRecyclerView.setLayoutManager (mStepLayoutManager);
+
         //specify adapter
         mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext (), mCallback);
         mStepsRecyclerView.setAdapter (mStepsAdapter);
         mStepsRecyclerView.setNestedScrollingEnabled (false);
-
-
 
         cvIngredients.setOnClickListener(v -> {
             if (v.findViewById (R.id.ingredientsRecyclerView).getVisibility () == View.VISIBLE) {

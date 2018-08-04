@@ -12,16 +12,25 @@ import android.widget.Button;
 import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 
 public class RecipeInstructionFragment extends Fragment {
     RecipeDetailFragment.OnStepSelectedListener mCallback;
-    private Step step;
+    private Step step, previousStep, nextStep;
+    private ArrayList<Step> steps;
     private MediaController mediaController;
-
+    VideoView vvStepVideo;
+    Button previousButton;
+    Button nextButton;
+    TextView tvStepLongDesc;
 
     public RecipeInstructionFragment() { }
+
 
     @Override
     public void onAttach(Context context) {
@@ -37,21 +46,45 @@ public class RecipeInstructionFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         step = getArguments().getParcelable (Constant.STEP_KEY);
+        steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
 
-        if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
-            ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (step.getStepShortDescription ());
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate view
         View view = inflater.inflate(R.layout.fragment_recipe_instruction, container, false);
 
-        VideoView vvStepVideo = view.findViewById (R.id.stepVideoView);
-        Button previousButton = view.findViewById (R.id.previousButton);
-        Button nextButton = view.findViewById (R.id.nextButton);
-        TextView tvStepLongDesc = view.findViewById (R.id.stepLongDescTextView);
+        setUpInstructionFragUI (view, step);
+
+        previousButton.setOnClickListener (v -> {
+            if (step.getStepId () == 0) {
+                setUpInstructionFragUI (view, step);
+                //mCallback.onStepSelected (steps, (step.getStepId ()));
+            } else {
+                mCallback.onStepSelected (steps, (step.getStepId ()) - 1);
+            }
+        });
+
+        nextButton.setOnClickListener (v -> {
+            if (step.getStepId () == (steps.size () - 1)) {
+                setUpInstructionFragUI (view, step);
+
+                //mCallback.onStepSelected (steps, (step.getStepId ()));
+            } else {
+                mCallback.onStepSelected (steps, (step.getStepId ()) + 1);
+            }
+        });
+
+        // Return view
+        return view;
+    }
+
+    public void setUpInstructionFragUI(View view, Step step) {
+        // Inflate view
+        vvStepVideo = view.findViewById (R.id.stepVideoView);
+        previousButton = view.findViewById (R.id.previousButton);
+        nextButton = view.findViewById (R.id.nextButton);
+        tvStepLongDesc = view.findViewById (R.id.stepLongDescTextView);
         String stepUrl = step.getStepVideoUrl ();
 
         tvStepLongDesc.setText (step.getStepLongDescription ());
@@ -66,7 +99,15 @@ public class RecipeInstructionFragment extends Fragment {
             vvStepVideo.setVideoURI (Uri.parse (step.getStepVideoUrl ()));
             vvStepVideo.seekTo (100);
         }
-        // Return view
-        return view;
+
+        if (step.getStepId () == 0) {
+            previousButton.setVisibility (View.GONE);
+        } else if (step.getStepId () == steps.size () - 1){
+            previousButton.setVisibility (View.VISIBLE);
+            nextButton.setVisibility (View.GONE);
+        } else {
+            previousButton.setVisibility (View.VISIBLE);
+            nextButton.setVisibility (View.VISIBLE);
+        }
     }
 }

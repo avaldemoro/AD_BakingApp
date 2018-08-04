@@ -1,7 +1,12 @@
 package co.asterv.ad_bakingapp;
 
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
@@ -37,9 +42,11 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
     }
 
     @Override
-    public void onStepSelected(Step step) {
+    public void onStepSelected(List<Step> steps, int position) {
         Bundle bundle = new Bundle();
-        bundle.putParcelable (Constant.STEP_KEY, step);
+        bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
+        bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
+
         RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
         fragment.setArguments (bundle);
 

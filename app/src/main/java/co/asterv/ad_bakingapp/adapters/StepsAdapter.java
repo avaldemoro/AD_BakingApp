@@ -1,6 +1,7 @@
 package co.asterv.ad_bakingapp.adapters;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -9,10 +10,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 import java.util.List;
 import co.asterv.ad_bakingapp.R;
 import co.asterv.ad_bakingapp.RecipeDetailFragment;
+import co.asterv.ad_bakingapp.RecipeInstructionFragment;
 import co.asterv.ad_bakingapp.model.Step;
+import co.asterv.ad_bakingapp.utils.Constant;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> {
     private Context context;
@@ -31,7 +36,6 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
     public StepsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout v = (ConstraintLayout) LayoutInflater.from (parent.getContext ())
                 .inflate (R.layout.step_list_item, parent, false);
-
         ViewHolder vh = new ViewHolder (v);
 
         return vh;
@@ -43,9 +47,13 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
         holder.stepShortDescTV.setText (shortDesc);
 
+        Bundle bundle = new Bundle();
+        RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
+        fragment.setArguments (bundle);
+
         holder.itemView.setOnClickListener (v -> {
             if (null != listener) {
-                listener.onStepSelected (steps.get(position));
+                listener.onStepSelected (steps, position);
             }
         });
     }
