@@ -10,13 +10,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import java.util.List;
+
 import co.asterv.ad_bakingapp.adapters.IngredientsAdapter;
 import co.asterv.ad_bakingapp.adapters.StepsAdapter;
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
+import co.asterv.ad_bakingapp.widget.UpdateWidgetService;
 
 public class RecipeDetailFragment extends Fragment{
     private Recipe recipe;
@@ -27,7 +31,6 @@ public class RecipeDetailFragment extends Fragment{
     private RecyclerView.LayoutManager mIngredientLayoutManager;
     private RecyclerView.LayoutManager mStepLayoutManager;
     RecipeDetailFragment.OnStepSelectedListener mCallback;
-
 
     public RecipeDetailFragment() { }
 
@@ -50,8 +53,6 @@ public class RecipeDetailFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         recipe = getArguments().getParcelable (Constant.RECIPE_KEY);
-
-
     }
 
     @Override
@@ -65,6 +66,7 @@ public class RecipeDetailFragment extends Fragment{
         TextView tvRecipeTitle = view.findViewById (R.id.recipeTitle);
         TextView tvRecipeServings = view.findViewById (R.id.servingsAmountTextView);
         CardView cvIngredients = view.findViewById (R.id.ingredientsCardView);
+        Button addWidgetButton = view.findViewById (R.id.addRecipeWidgetButton);
 
         tvRecipeTitle.setText (recipe.getRecipeName ());
         tvRecipeServings.setText (String.valueOf (recipe.getServings ()));
@@ -100,7 +102,15 @@ public class RecipeDetailFragment extends Fragment{
             }
         });
 
+        // add to widget button
+        addWidgetButton.setOnClickListener(view1 -> {
+            UpdateWidgetService.startUpdateWidgetService (getContext (), recipe);
+            Toast.makeText (getActivity (), "Added " + recipe.getRecipeName () + " to Widget.", Toast.LENGTH_SHORT).show ();
+        });
+
         // Return view
         return view;
     }
+
+
 }

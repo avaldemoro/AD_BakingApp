@@ -1,13 +1,19 @@
 package co.asterv.ad_bakingapp;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Toolbar;
+
 import java.util.ArrayList;
 import java.util.List;
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
+import co.asterv.ad_bakingapp.widget.UpdateWidgetService;
 
 public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeSelectedListener, RecipeDetailFragment.OnStepSelectedListener {
     @Override
