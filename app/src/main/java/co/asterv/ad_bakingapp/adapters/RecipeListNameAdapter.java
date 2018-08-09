@@ -7,16 +7,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.asterv.ad_bakingapp.R;
 import co.asterv.ad_bakingapp.RecipeListFragment;
 import co.asterv.ad_bakingapp.model.Recipe;
 
 public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAdapter.ViewHolder> {
     private static Recipe[] recipes;
-    private TextView recipeNameTV;
     private Context context;
     RecipeListFragment.OnRecipeSelectedListener listener;
-
 
     public RecipeListNameAdapter(Recipe[] recipes, Context context, RecipeListFragment.OnRecipeSelectedListener listener) {
         this.context = context;
@@ -27,7 +28,6 @@ public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAd
     @NonNull
     @Override
     public RecipeListNameAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // create a new view
         ConstraintLayout v = (ConstraintLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recipe_name_list_item, parent, false);
         ViewHolder vh = new ViewHolder(v);
@@ -54,11 +54,12 @@ public class RecipeListNameAdapter extends RecyclerView.Adapter<RecipeListNameAd
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView recipeNameTV;
+        @BindView (R.id.recipeName) TextView recipeNameTV;
+
         public ViewHolder(ConstraintLayout itemView) {
             super (itemView);
+            ButterKnife.bind(this, itemView);
 
-            recipeNameTV = itemView.findViewById (R.id.recipeName);
         }
     }
 }

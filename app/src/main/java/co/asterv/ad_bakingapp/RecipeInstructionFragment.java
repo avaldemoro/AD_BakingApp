@@ -13,25 +13,26 @@ import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 import java.util.ArrayList;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 
 public class RecipeInstructionFragment extends Fragment {
+    @BindView (R.id.stepVideoView) VideoView vvStepVideo;
+    @BindView (R.id.previousButton) Button previousButton;
+    @BindView (R.id.nextButton) Button nextButton;
+    @BindView (R.id.stepLongDescTextView) TextView tvStepLongDesc;
     RecipeDetailFragment.OnStepSelectedListener mCallback;
     private Step step;
     private ArrayList<Step> steps;
     private MediaController mediaController;
-    VideoView vvStepVideo;
-    Button previousButton;
-    Button nextButton;
-    TextView tvStepLongDesc;
 
     public RecipeInstructionFragment() { }
 
     @Override
     public void onStart() {
         super.onStart();
-        // where mText is the title you want on your toolbar/actionBar
         getActivity().setTitle(step.getStepShortDescription ());
     }
 
@@ -50,23 +51,22 @@ public class RecipeInstructionFragment extends Fragment {
         super.onCreate (savedInstanceState);
         step = getArguments().getParcelable (Constant.STEP_KEY);
         steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
-
-
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_recipe_instruction, container, false);
+        ButterKnife.bind(this, view);
+
         if(((AppCompatActivity)getActivity()).getSupportActionBar() != null) {
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (step.getStepShortDescription ());
         }
-        setUpInstructionFragUI (view, step);
+
+        setUpInstructionFragUI (step);
 
         previousButton.setOnClickListener (v -> {
             if (step.getStepId () == 0) {
-                setUpInstructionFragUI (view, step);
-                //mCallback.onStepSelected (steps, (step.getStepId ()));
+                setUpInstructionFragUI (step);
             } else {
                 mCallback.onStepSelected (steps, (step.getStepId ()) - 1);
             }
@@ -74,24 +74,16 @@ public class RecipeInstructionFragment extends Fragment {
 
         nextButton.setOnClickListener (v -> {
             if (step.getStepId () == (steps.size () - 1)) {
-                setUpInstructionFragUI (view, step);
-
-                //mCallback.onStepSelected (steps, (step.getStepId ()));
+                setUpInstructionFragUI (step);
             } else {
                 mCallback.onStepSelected (steps, (step.getStepId ()) + 1);
             }
         });
 
-        // Return view
         return view;
     }
 
-    public void setUpInstructionFragUI(View view, Step step) {
-        // Inflate view
-        vvStepVideo = view.findViewById (R.id.stepVideoView);
-        previousButton = view.findViewById (R.id.previousButton);
-        nextButton = view.findViewById (R.id.nextButton);
-        tvStepLongDesc = view.findViewById (R.id.stepLongDescTextView);
+    public void setUpInstructionFragUI(Step step) {
         String stepUrl = step.getStepVideoUrl ();
 
         tvStepLongDesc.setText (step.getStepLongDescription ());

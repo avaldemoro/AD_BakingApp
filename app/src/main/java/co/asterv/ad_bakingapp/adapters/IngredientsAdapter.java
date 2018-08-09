@@ -8,15 +8,15 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.asterv.ad_bakingapp.R;
 import co.asterv.ad_bakingapp.model.Ingredient;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.ViewHolder> {
     private Context context;
     private static List<Ingredient> ingredients;
-    private TextView ingredientQuantityTV;
-    private TextView ingredientNameTV;
-    private TextView ingredientMeasureTV;
 
     public IngredientsAdapter(List<Ingredient> ingredients, Context context) {
         this.context = context;
@@ -34,6 +34,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull IngredientsAdapter.ViewHolder holder, int position) {
+
         int quantity = (int) Math.round(ingredients.get (position).getIngredientsQuantity ());
         String measureType = ingredients.get(position).getIngredientsMeasureType ();
         String ingredientName = ingredients.get(position).getIngredientsName ();
@@ -52,16 +53,13 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView ingredientQuantityTV;
-        TextView ingredientNameTV;
-        TextView ingredientMeasureTV;
+        @BindView(R.id.ingredientQuantityTextView) TextView ingredientQuantityTV;
+        @BindView (R.id.ingredientNameTextView) TextView ingredientNameTV;
+        @BindView (R.id.ingredientMeasureTextView) TextView ingredientMeasureTV;
 
         public ViewHolder(ConstraintLayout itemView) {
             super (itemView);
-
-            ingredientQuantityTV = itemView.findViewById (R.id.ingredientQuantityTextView);
-            ingredientNameTV = itemView.findViewById (R.id.ingredientNameTextView);
-            ingredientMeasureTV = itemView.findViewById (R.id.ingredientMeasureTextView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.asterv.ad_bakingapp.adapters.RecipeListNameAdapter;
 import co.asterv.ad_bakingapp.model.Ingredient;
 import co.asterv.ad_bakingapp.model.Recipe;
@@ -25,7 +28,7 @@ import co.asterv.ad_bakingapp.utils.Constant;
 import co.asterv.ad_bakingapp.utils.JsonUtils;
 
 public class RecipeListFragment extends Fragment {
-    private static RecyclerView mRecipeRecyclerView;
+    @BindView(R.id.recipeNameRecyclerView) RecyclerView mRecipeRecyclerView;
     private static RecyclerView.Adapter mRecipeAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
     private Recipe[] recipes;
@@ -53,10 +56,10 @@ public class RecipeListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate view
         View view = inflater.inflate(R.layout.fragment_recipe_list, container, false);
+        ButterKnife.bind(this, view);
 
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.MAIN_TITLE);
 
-        mRecipeRecyclerView = view.findViewById(R.id.recipeNameRecyclerView);
         mLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
         mRecipeRecyclerView.setLayoutManager(mLayoutManager);
 
