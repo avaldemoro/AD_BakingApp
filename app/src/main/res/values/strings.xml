@@ -4,6 +4,6 @@
     <string name="ingredients_amount">X.XX</string>
     <string name="recipe_name">Recipe Name</string>
     <string name="measure_type">cups</string>
-    <string name="appwidget_text">Nutella Pie</string>
+    <string name="appwidget_text">Recipe Name</string>
     <string name="add_widget">Add widget</string>
 </resources>

@@ -1,5 +1,6 @@
 package co.asterv.ad_bakingapp.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -7,7 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 import java.util.List;
+
+import co.asterv.ad_bakingapp.MainActivity;
 import co.asterv.ad_bakingapp.R;
+import co.asterv.ad_bakingapp.RecipeDetailFragment;
 import co.asterv.ad_bakingapp.model.Ingredient;
 
 /**
@@ -32,6 +36,11 @@ public class RecipeWidgetProvider extends AppWidgetProvider {
             ComponentName component = new ComponentName(context, RecipeWidgetProvider.class);
             appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.appwidget_ingredientsList);
             views.setTextViewText (R.id.appwidget_recipeTitle, recipeName);
+
+            Intent openAppIntent = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity (context, 0, openAppIntent, 0);
+            views.setOnClickPendingIntent (R.id.appwidget_recipeTitle, pendingIntent);
+
             appWidgetManager.updateAppWidget(component, views);
         }
     }
