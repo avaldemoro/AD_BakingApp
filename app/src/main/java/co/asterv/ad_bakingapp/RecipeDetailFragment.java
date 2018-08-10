@@ -2,6 +2,7 @@ package co.asterv.ad_bakingapp;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -25,6 +26,8 @@ import co.asterv.ad_bakingapp.widget.UpdateWidgetService;
 
 public class RecipeDetailFragment extends Fragment{
     private Recipe recipe;
+    private Parcelable mListState;
+
     @BindView(R.id.ingredientsRecyclerView) RecyclerView mIngredientsRecyclerView;
     @BindView(R.id.stepsRecyclerView) RecyclerView mStepsRecyclerView;
     @BindView(R.id.recipeTitle) TextView tvRecipeTitle;
@@ -41,6 +44,36 @@ public class RecipeDetailFragment extends Fragment{
 
     public interface OnStepSelectedListener {
         void onStepSelected(List<Step> steps, int position);
+    }
+
+    /***
+     * Thanks to https://stackoverflow.com/questions/28236390/recyclerview-store-restore-state-between-activities
+     * for the code to store/restore RecyclerView state between activities
+     * ***/
+    @Override
+    public void onSaveInstanceState(Bundle state) {
+        super.onSaveInstanceState(state);
+
+        // Save list state for Steps
+        mListState = mStepLayoutManager.onSaveInstanceState();
+        state.putParcelable(Constant.STEP_LIST_STATE_KEY, mListState);
+    }
+
+    public void onRestoreInstanceState(Bundle outState) {
+        // Retrieve list state and list/item positions
+        if (outState != null) {
+            mListState = outState.getParcelable (Constant.STEP_LIST_STATE_KEY);
+
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mListState != null) {
+            mStepLayoutManager.onRestoreInstanceState(mListState);
+        }
     }
 
     @Override
