@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import java.util.List;
@@ -57,6 +58,7 @@ public class RecipeDetailFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         recipe = getArguments().getParcelable (Constant.RECIPE_KEY);
+
     }
 
     @Override
@@ -68,26 +70,33 @@ public class RecipeDetailFragment extends Fragment{
             ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle (Constant.DETAILS_TITLE);
         }
 
+        // Title & Servings
         tvRecipeTitle.setText (recipe.getRecipeName ());
         tvRecipeServings.setText (String.valueOf (recipe.getServings ()));
 
-        mIngredientLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
-        mStepLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
+        // Widget Button
+        addWidgetButton.setOnClickListener(view1 -> {
+            UpdateWidgetService.startUpdateWidgetService (getContext (), recipe);
+            Toast.makeText (getActivity (), "Added " + recipe.getRecipeName () + " to Widget.", Toast.LENGTH_SHORT).show ();
+        });
 
-        /*** SET UP INGREDIENTS RV ***/
+        // Ingredients Recycler View
+        setUpIngredientsRecyclerView ();
+
+        // Steps Recycler View
+        setUpStepsRecyclerView ();
+
+        return view;
+    }
+
+    private void setUpIngredientsRecyclerView() {
+        mIngredientLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
         mIngredientsRecyclerView.setLayoutManager (mIngredientLayoutManager);
         mIngredientsRecyclerView.setVisibility(View.GONE);
 
         mIngredientsAdapter = new IngredientsAdapter (recipe.getIngredients (), getContext ());
         mIngredientsRecyclerView.setAdapter (mIngredientsAdapter);
         mIngredientsRecyclerView.setNestedScrollingEnabled (false);
-
-        /*** SET UP STEPS RV ***/
-        mStepsRecyclerView.setLayoutManager (mStepLayoutManager);
-
-        mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext (), mCallback);
-        mStepsRecyclerView.setAdapter (mStepsAdapter);
-        mStepsRecyclerView.setNestedScrollingEnabled (false);
 
         cvIngredients.setOnClickListener(v -> {
             if (mIngredientsRecyclerView.getVisibility () == View.VISIBLE) {
@@ -96,13 +105,13 @@ public class RecipeDetailFragment extends Fragment{
                 mIngredientsRecyclerView.setVisibility(View.VISIBLE);
             }
         });
+    }
+    private void setUpStepsRecyclerView() {
+        mStepLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
+        mStepsRecyclerView.setLayoutManager (mStepLayoutManager);
 
-        // "Add to Widget" button
-        addWidgetButton.setOnClickListener(view1 -> {
-            UpdateWidgetService.startUpdateWidgetService (getContext (), recipe);
-            Toast.makeText (getActivity (), "Added " + recipe.getRecipeName () + " to Widget.", Toast.LENGTH_SHORT).show ();
-        });
-
-        return view;
+        mStepsAdapter = new StepsAdapter (recipe.getSteps (), getContext (), mCallback);
+        mStepsRecyclerView.setAdapter (mStepsAdapter);
+        mStepsRecyclerView.setNestedScrollingEnabled (false);
     }
 }

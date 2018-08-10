@@ -1,10 +1,13 @@
 package co.asterv.ad_bakingapp.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +51,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
         RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
         fragment.setArguments (bundle);
 
-        holder.itemView.setOnClickListener (v -> {
+        holder.itemView.setOnClickListener ((View v) -> {
             if (null != listener) {
                 listener.onStepSelected (steps, position);
             }
@@ -68,7 +71,9 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.ViewHolder> 
 
         public ViewHolder(View itemView) {
             super (itemView);
+            itemView.setClickable(true);
             ButterKnife.bind(this, itemView);
+
         }
     }
 }

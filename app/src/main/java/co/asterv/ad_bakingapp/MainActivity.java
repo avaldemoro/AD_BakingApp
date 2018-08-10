@@ -1,21 +1,18 @@
 package co.asterv.ad_bakingapp;
 
-import android.content.Intent;
-import android.os.Build;
 import android.os.Parcelable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toolbar;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
 import co.asterv.ad_bakingapp.model.Recipe;
 import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
-import co.asterv.ad_bakingapp.widget.UpdateWidgetService;
 
-public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeSelectedListener, RecipeDetailFragment.OnStepSelectedListener {
+public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeSelectedListener, RecipeDetailFragment.OnStepSelectedListener{
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
@@ -46,17 +43,33 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
 
     @Override
     public void onStepSelected(List<Step> steps, int position) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
-        bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
+        boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+        Log.e("IS THIS A TABLET?!", String.valueOf (tabletSize));
+        if (tabletSize) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
+            bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
 
-        RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
-        fragment.setArguments (bundle);
+            RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
+            fragment.setArguments (bundle);
 
-        getSupportFragmentManager ().beginTransaction ()
-                .replace (R.id.frame_container, fragment)
-                .addToBackStack (null)
-                .commit ();
+            getSupportFragmentManager ().beginTransaction ()
+                    .replace (R.id.recipe_detail_container, fragment)
+                    .addToBackStack (null)
+                    .commit ();
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
+            bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
+
+            RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
+            fragment.setArguments (bundle);
+
+            getSupportFragmentManager ().beginTransaction ()
+                    .replace (R.id.frame_container, fragment)
+                    .addToBackStack (null)
+                    .commit ();
+        }
     }
 
     /***

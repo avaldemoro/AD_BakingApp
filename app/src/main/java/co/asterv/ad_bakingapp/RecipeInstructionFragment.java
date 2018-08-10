@@ -1,10 +1,14 @@
 package co.asterv.ad_bakingapp;
 
 import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +31,7 @@ public class RecipeInstructionFragment extends Fragment {
     private Step step;
     private ArrayList<Step> steps;
     private MediaController mediaController;
+    private int screenHeight, screenWidth;
 
     public RecipeInstructionFragment() { }
 
@@ -51,6 +56,11 @@ public class RecipeInstructionFragment extends Fragment {
         super.onCreate (savedInstanceState);
         step = getArguments().getParcelable (Constant.STEP_KEY);
         steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getActivity ().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        screenHeight = displaymetrics.heightPixels;
+        screenWidth = displaymetrics.widthPixels;
     }
 
     @Override
@@ -94,9 +104,22 @@ public class RecipeInstructionFragment extends Fragment {
             vvStepVideo.setVisibility (View.GONE);
         } else {
             vvStepVideo.setMediaController (mediaController);
+
             mediaController.setAnchorView (vvStepVideo);
             vvStepVideo.setVideoURI (Uri.parse (step.getStepVideoUrl ()));
             vvStepVideo.seekTo (100);
+
+            // Check orientation of the screen and set height of videoView accordingly
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                // get layout parameters for that view
+                ViewGroup.LayoutParams params = vvStepVideo.getLayoutParams();
+
+                // change height of the params e.g. 480dp
+                params.height = screenHeight;
+
+                // initialize new parameters for my element
+                vvStepVideo.setLayoutParams(params);
+            }
         }
 
         if (step.getStepId () == 0) {
