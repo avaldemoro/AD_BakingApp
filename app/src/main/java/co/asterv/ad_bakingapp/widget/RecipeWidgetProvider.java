@@ -8,10 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.widget.RemoteViews;
 import java.util.List;
-
 import co.asterv.ad_bakingapp.MainActivity;
 import co.asterv.ad_bakingapp.R;
-import co.asterv.ad_bakingapp.RecipeDetailFragment;
 import co.asterv.ad_bakingapp.model.Ingredient;
 
 /**

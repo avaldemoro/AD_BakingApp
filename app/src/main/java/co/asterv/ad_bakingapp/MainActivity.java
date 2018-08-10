@@ -3,8 +3,6 @@ package co.asterv.ad_bakingapp;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.List;
 import co.asterv.ad_bakingapp.model.Recipe;
@@ -44,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
     @Override
     public void onStepSelected(List<Step> steps, int position) {
         boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
-        Log.e("IS THIS A TABLET?!", String.valueOf (tabletSize));
         if (tabletSize) {
             Bundle bundle = new Bundle();
             bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
