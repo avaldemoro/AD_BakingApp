@@ -1,6 +1,9 @@
 package co.asterv.ad_bakingapp.utils;
 
 public class Constant {
+
+    public final static int TOAST_DURATION = 400;
+
     /*** TITLES/UI ***/
     public final static String DETAILS_TITLE = "Details";
     public final static String MAIN_TITLE = "For Goodness Bakes";
@@ -25,4 +28,10 @@ public class Constant {
     public final static String STEP_VIDEO_URL = "videoURL";
     public final static String STEP_THUMB_URL = "thumbnailURL";
     public final static String SERVINGS_KEY = "servings";
+
+    /*** ERROR MESSAGES ***/
+    public final static String NO_INTERNET_TEXT = "Oh no! No internet connection.";
+
+    /*** COMMANDS ***/
+    public final static String INTERNET_CHECK_COMMAND = "/system/bin/ping -c 1 8.8.8.8";
 }
