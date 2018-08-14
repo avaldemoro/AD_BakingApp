@@ -1,9 +1,13 @@
 package co.asterv.ad_bakingapp;
 
+import android.app.Fragment;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Parcelable;
 import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -14,24 +18,27 @@ import co.asterv.ad_bakingapp.model.Step;
 import co.asterv.ad_bakingapp.utils.Constant;
 
 public class MainActivity extends AppCompatActivity implements RecipeListFragment.OnRecipeSelectedListener, RecipeDetailFragment.OnStepSelectedListener{
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         setContentView (R.layout.activity_main);
-        // Check if online
-        if (isOnline ()) {
-            Bundle bundle = new Bundle();
-            RecipeListFragment listFragment = new RecipeListFragment ();
-            listFragment.setArguments (bundle);
 
-            getSupportFragmentManager ().beginTransaction ()
-                    .replace (R.id.frame_container, listFragment)
-                    .commit ();
-        } else {
-            Toast.makeText(getApplicationContext(), Constant.NO_INTERNET_TEXT, Toast.LENGTH_LONG).show();
+        if (savedInstanceState == null) {
+            // Check if online
+            if (isOnline ()) {
+                Bundle bundle = new Bundle();
+                RecipeListFragment listFragment = new RecipeListFragment ();
+                listFragment.setArguments (bundle);
+
+                getSupportFragmentManager ().beginTransaction ()
+                        .replace (R.id.frame_container, listFragment)
+                        .commit ();
+
+            } else {
+                Toast.makeText(getApplicationContext(), Constant.NO_INTERNET_TEXT, Toast.LENGTH_LONG).show();
+            }
         }
-
+        shouldDisplayHomeUp ();
     }
 
     @Override
@@ -58,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
         // Check if online
         if (isOnline ()) {
             boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
+
             if (tabletSize) {
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
@@ -65,11 +73,14 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
 
                 RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
                 fragment.setArguments (bundle);
+                getSupportFragmentManager ().popBackStack("BACK_STACK_ROOT_TAG", getSupportFragmentManager ().POP_BACK_STACK_INCLUSIVE);
+
 
                 getSupportFragmentManager ().beginTransaction ()
                         .replace (R.id.recipe_detail_container, fragment)
-                        .addToBackStack (null)
+                        .addToBackStack ("BACK_STACK_ROOT_TAG")
                         .commit ();
+
             } else {
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
@@ -77,15 +88,18 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
 
                 RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
                 fragment.setArguments (bundle);
+                getSupportFragmentManager ().popBackStack("BACK_STACK_ROOT_TAG", getSupportFragmentManager ().POP_BACK_STACK_INCLUSIVE);
+
 
                 getSupportFragmentManager ().beginTransaction ()
                         .replace (R.id.frame_container, fragment)
-                        .addToBackStack (null)
+                        .addToBackStack ("BACK_STACK_ROOT_TAG")
                         .commit ();
             }
         } else {
             Toast.makeText(getApplicationContext(), Constant.NO_INTERNET_TEXT, Toast.LENGTH_LONG).show();
         }
+        shouldDisplayHomeUp ();
     }
 
     /***
@@ -112,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
 
     /*** CHECKS IF ONLINE
      * https://stackoverflow.com/questions/1560788/how-to-check-internet-access-on-android-inetaddress-never-times-out ***/
-    public boolean isOnline() {
+    public static boolean isOnline() {
         Runtime runtime = Runtime.getRuntime();
         try {
             Process ipProcess = runtime.exec(Constant.INTERNET_CHECK_COMMAND);

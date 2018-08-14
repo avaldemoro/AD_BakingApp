@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,13 @@ public class RecipeInstructionFragment extends Fragment {
     public RecipeInstructionFragment() { }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState (outState);
+        outState.putParcelable ("CURRENTSTEP", step);
+        outState.putParcelableArrayList ("CURRENTSTEPARRAYLIST", steps);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         getActivity().setTitle(step.getStepShortDescription ());
@@ -52,14 +61,24 @@ public class RecipeInstructionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        step = getArguments().getParcelable (Constant.STEP_KEY);
-        steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
+
+        Log.e("savaed", String.valueOf (savedInstanceState));
+
+        if (savedInstanceState != null) {
+            step = savedInstanceState.getParcelable ("CURRENTSTEP");
+            steps = savedInstanceState.getParcelableArrayList ("CURRENTSTEPARRAYLIST");
+        } else {
+            step = getArguments().getParcelable (Constant.STEP_KEY);
+            steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
+        }
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getActivity ().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         screenHeight = displaymetrics.heightPixels;
         screenWidth = displaymetrics.widthPixels;
     }
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -1,7 +1,6 @@
 package co.asterv.ad_bakingapp.utils;
 
 public class Constant {
-
     public final static String LIST_STATE_KEY = "LIST_STATE_KEY";
     public final static String STEP_LIST_STATE_KEY = "STEP_LIST_STATE_KEY";
 

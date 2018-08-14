@@ -27,7 +27,6 @@ import co.asterv.ad_bakingapp.widget.UpdateWidgetService;
 public class RecipeDetailFragment extends Fragment{
     private Recipe recipe;
     private Parcelable mListState;
-
     @BindView(R.id.ingredientsRecyclerView) RecyclerView mIngredientsRecyclerView;
     @BindView(R.id.stepsRecyclerView) RecyclerView mStepsRecyclerView;
     @BindView(R.id.recipeTitle) TextView tvRecipeTitle;
@@ -90,7 +89,6 @@ public class RecipeDetailFragment extends Fragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
         recipe = getArguments().getParcelable (Constant.RECIPE_KEY);
-
     }
 
     @Override
@@ -103,8 +101,9 @@ public class RecipeDetailFragment extends Fragment{
         }
 
         // Title & Servings
-        tvRecipeTitle.setText (recipe.getRecipeName ());
         tvRecipeServings.setText (String.valueOf (recipe.getServings ()));
+        tvRecipeTitle.setText (recipe.getRecipeName ());
+
 
         // Widget Button
         addWidgetButton.setOnClickListener(view1 -> {
