@@ -60,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
         }
     }
 
+    /*** CREDIT TO: https://medium.com/@bherbst/managing-the-fragment-back-stack-373e87e4ff62
+     * for managing fragment backstack
+     * ***/
+
     @Override
     public void onStepSelected(List<Step> steps, int position) {
         // Check if online
@@ -67,39 +71,30 @@ public class MainActivity extends AppCompatActivity implements RecipeListFragmen
             boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
 
             if (tabletSize) {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
-                bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
-
-                RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
-                fragment.setArguments (bundle);
-                getSupportFragmentManager ().popBackStack("BACK_STACK_ROOT_TAG", getSupportFragmentManager ().POP_BACK_STACK_INCLUSIVE);
-
-
-                getSupportFragmentManager ().beginTransaction ()
-                        .replace (R.id.recipe_detail_container, fragment)
-                        .addToBackStack ("BACK_STACK_ROOT_TAG")
-                        .commit ();
-
+                openFragment (R.id.recipe_detail_container, steps, position);
             } else {
-                Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
-                bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
-
-                RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
-                fragment.setArguments (bundle);
-                getSupportFragmentManager ().popBackStack("BACK_STACK_ROOT_TAG", getSupportFragmentManager ().POP_BACK_STACK_INCLUSIVE);
-
-
-                getSupportFragmentManager ().beginTransaction ()
-                        .replace (R.id.frame_container, fragment)
-                        .addToBackStack ("BACK_STACK_ROOT_TAG")
-                        .commit ();
+                openFragment (R.id.frame_container, steps, position);
             }
+
         } else {
             Toast.makeText(getApplicationContext(), Constant.NO_INTERNET_TEXT, Toast.LENGTH_LONG).show();
         }
         shouldDisplayHomeUp ();
+    }
+
+    public void openFragment(int container, List<Step> steps, int position) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList (Constant.STEPS_KEY,(ArrayList<? extends Parcelable>) steps);
+        bundle.putParcelable (Constant.STEP_KEY, steps.get(position));
+
+        RecipeInstructionFragment fragment = new RecipeInstructionFragment ();
+        fragment.setArguments (bundle);
+        getSupportFragmentManager ().popBackStack("BACK_STACK_ROOT_TAG", getSupportFragmentManager ().POP_BACK_STACK_INCLUSIVE);
+
+        getSupportFragmentManager ().beginTransaction ()
+                .replace (container, fragment)
+                .addToBackStack ("BACK_STACK_ROOT_TAG")
+                .commit ();
     }
 
     /***
