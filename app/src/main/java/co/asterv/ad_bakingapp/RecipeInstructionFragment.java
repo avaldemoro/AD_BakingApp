@@ -2,6 +2,7 @@ package co.asterv.ad_bakingapp;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -51,12 +52,8 @@ public class RecipeInstructionFragment extends Fragment {
     private int screenHeight, screenWidth;
 
     // Exoplayer related variables
-    private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
-    private static final String KEY_WINDOW = "window";
-    private static final String KEY_POSITION = "position";
-
     @BindView(R.id.stepVideoPlayerView) PlayerView mPlayerView;
-    SimpleExoPlayer player;
+    private SimpleExoPlayer player;
 
     private Timeline.Window window;
     private DataSource.Factory mediaDataSourceFactory;
@@ -73,13 +70,13 @@ public class RecipeInstructionFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         updateStartPosition ();
-        outState.putParcelable ("CURRENTSTEP", step);
-        outState.putParcelableArrayList ("CURRENTSTEPARRAYLIST", steps);
+        outState.putParcelable (Constant.CURRENT_STEP, step);
+        outState.putParcelableArrayList (Constant.CURRENT_STEP_ARRAYLIST, steps);
         updateStartPosition();
 
-        outState.putBoolean(KEY_PLAY_WHEN_READY, playWhenReady);
-        outState.putInt(KEY_WINDOW, currentWindow);
-        outState.putLong(KEY_POSITION, playbackPosition);
+        outState.putBoolean(Constant.KEY_PLAY_WHEN_READY, playWhenReady);
+        outState.putInt(Constant.KEY_WINDOW, currentWindow);
+        outState.putLong(Constant.KEY_POSITION, playbackPosition);
         super.onSaveInstanceState (outState);
     }
 
@@ -104,12 +101,11 @@ public class RecipeInstructionFragment extends Fragment {
         super.onCreate (savedInstanceState);
 
         if (savedInstanceState != null) {
-            step = savedInstanceState.getParcelable ("CURRENTSTEP");
-            steps = savedInstanceState.getParcelableArrayList ("CURRENTSTEPARRAYLIST");
-            playWhenReady = savedInstanceState.getBoolean (KEY_PLAY_WHEN_READY);
-            currentWindow = savedInstanceState.getInt(KEY_WINDOW);
-            playbackPosition = savedInstanceState.getLong(KEY_POSITION);
-
+            step = savedInstanceState.getParcelable (Constant.CURRENT_STEP);
+            steps = savedInstanceState.getParcelableArrayList (Constant.CURRENT_STEP_ARRAYLIST);
+            playWhenReady = savedInstanceState.getBoolean (Constant.KEY_PLAY_WHEN_READY);
+            currentWindow = savedInstanceState.getInt(Constant.KEY_WINDOW);
+            playbackPosition = savedInstanceState.getLong(Constant.KEY_POSITION);
         } else {
             step = getArguments ().getParcelable (Constant.STEP_KEY);
             steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
@@ -121,7 +117,7 @@ public class RecipeInstructionFragment extends Fragment {
         shouldAutoPlay = true;
         bandwidthMeter = new DefaultBandwidthMeter ();
         mediaDataSourceFactory = new DefaultDataSourceFactory(getContext (),
-                Util.getUserAgent(getContext (), "ad_bakingapp"), (TransferListener<? super DataSource>) bandwidthMeter);
+                Util.getUserAgent(getContext (), Constant.APP_NAME), (TransferListener<? super DataSource>) bandwidthMeter);
 
         window = new Timeline.Window ();
 
@@ -170,7 +166,19 @@ public class RecipeInstructionFragment extends Fragment {
         if (stepUrl.isEmpty ()) {
             mPlayerView.setVisibility (View.GONE);
         } else {
-            initializePlayer ();
+            initializePlayer (stepUrl);
+            // Check orientation of the screen and set height of videoView accordingly
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+
+                // get layout parameters for that view
+                ViewGroup.LayoutParams params = mPlayerView.getLayoutParams();
+
+                // change height of the params e.g. 480dp
+                params.height = screenHeight;
+
+                // initialize new parameters for my element
+                mPlayerView.setLayoutParams(params);
+            }
         }
 
         if (step.getStepId () == 0) {
@@ -184,7 +192,7 @@ public class RecipeInstructionFragment extends Fragment {
         }
     }
 
-    private void initializePlayer() {
+    private void initializePlayer(String stepUrl) {
         mPlayerView.requestFocus ();
 
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory (bandwidthMeter);
@@ -193,7 +201,7 @@ public class RecipeInstructionFragment extends Fragment {
         mPlayerView.setPlayer (player);
 
         player.setPlayWhenReady (shouldAutoPlay);
-        MediaSource mediaSource = new ExtractorMediaSource.Factory (mediaDataSourceFactory).createMediaSource (Uri.parse(step.getStepVideoUrl ()));
+        MediaSource mediaSource = new ExtractorMediaSource.Factory (mediaDataSourceFactory).createMediaSource (Uri.parse(stepUrl));
 
         boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
         if (haveStartPosition) {
@@ -223,7 +231,7 @@ public class RecipeInstructionFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer();
+            initializePlayer(step.getStepVideoUrl ());
         }
     }
 
@@ -242,4 +250,8 @@ public class RecipeInstructionFragment extends Fragment {
             releasePlayer();
         }
     }
+
+    /*** Thanks to yusufcakmak for the ExoPlayer example:
+     * https://github.com/yusufcakmak/ExoPlayerSample
+     * ***/
 }

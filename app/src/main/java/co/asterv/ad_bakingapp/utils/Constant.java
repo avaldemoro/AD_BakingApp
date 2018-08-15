@@ -1,9 +1,17 @@
 package co.asterv.ad_bakingapp.utils;
 
 public class Constant {
-    public final static String LIST_STATE_KEY = "LIST_STATE_KEY";
-    public final static String STEP_LIST_STATE_KEY = "STEP_LIST_STATE_KEY";
+    public static final String APP_NAME = "ad_bakingapp";
+
+    /*** KEYS ***/
+    public static final String KEY_PLAY_WHEN_READY = "play_when_ready";
+    public static final String KEY_WINDOW = "window";
+    public static final String KEY_POSITION = "position";
+    public static final String LIST_STATE_KEY = "LIST_STATE_KEY";
+    public static final String STEP_LIST_STATE_KEY = "STEP_LIST_STATE_KEY";
     public static final String PLAYER_ACTIVITY_TAG = "PlayerActivity";
+    public static final String CURRENT_STEP = "CURRENT_STEP";
+    public static final String CURRENT_STEP_ARRAYLIST = "CURRENT_STEP_ARRAYLIST";
 
     /*** TITLES/UI ***/
     public final static String DETAILS_TITLE = "Details";
