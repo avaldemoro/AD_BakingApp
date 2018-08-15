@@ -13,17 +13,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.mediacodec.MediaCodecSelector;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.TransferListener;
@@ -42,39 +49,44 @@ public class RecipeInstructionFragment extends Fragment {
     private Step step;
     private ArrayList<Step> steps;
     private int screenHeight, screenWidth;
+
+    // Exoplayer related variables
+    private static final String KEY_PLAY_WHEN_READY = "play_when_ready";
+    private static final String KEY_WINDOW = "window";
+    private static final String KEY_POSITION = "position";
+
     @BindView(R.id.stepVideoPlayerView) PlayerView mPlayerView;
     SimpleExoPlayer player;
-    // bandwidth meter to measure and estimate bandwidth
-    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter ();
+
+    private Timeline.Window window;
     private DataSource.Factory mediaDataSourceFactory;
+    private DefaultTrackSelector trackSelector;
+    private boolean shouldAutoPlay;
+    private BandwidthMeter bandwidthMeter;
 
-
-    private ComponentListener componentListener;
-
-    private long playbackPosition;
+    private boolean playWhenReady;
     private int currentWindow;
-    private boolean playWhenReady = true;
+    private long playbackPosition;
 
-
-    public RecipeInstructionFragment() {
-    }
+    public RecipeInstructionFragment() { }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState (outState);
+        updateStartPosition ();
         outState.putParcelable ("CURRENTSTEP", step);
         outState.putParcelableArrayList ("CURRENTSTEPARRAYLIST", steps);
+        updateStartPosition();
+
+        outState.putBoolean(KEY_PLAY_WHEN_READY, playWhenReady);
+        outState.putInt(KEY_WINDOW, currentWindow);
+        outState.putLong(KEY_POSITION, playbackPosition);
+        super.onSaveInstanceState (outState);
     }
 
     @Override
     public void onStart() {
         super.onStart ();
         getActivity ().setTitle (step.getStepShortDescription ());
-
-        if (Util.SDK_INT > 23) {
-            initializePlayer(step.getStepVideoUrl ());
-        }
-
     }
 
     @Override
@@ -90,22 +102,33 @@ public class RecipeInstructionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate (savedInstanceState);
-        componentListener = new ComponentListener();
+
         if (savedInstanceState != null) {
             step = savedInstanceState.getParcelable ("CURRENTSTEP");
             steps = savedInstanceState.getParcelableArrayList ("CURRENTSTEPARRAYLIST");
+            playWhenReady = savedInstanceState.getBoolean (KEY_PLAY_WHEN_READY);
+            currentWindow = savedInstanceState.getInt(KEY_WINDOW);
+            playbackPosition = savedInstanceState.getLong(KEY_POSITION);
+
         } else {
             step = getArguments ().getParcelable (Constant.STEP_KEY);
             steps = getArguments ().getParcelableArrayList (Constant.STEPS_KEY);
+            playWhenReady = true;
+            currentWindow = 0;
+            playbackPosition = 0;
         }
+
+        shouldAutoPlay = true;
+        bandwidthMeter = new DefaultBandwidthMeter ();
+        mediaDataSourceFactory = new DefaultDataSourceFactory(getContext (),
+                Util.getUserAgent(getContext (), "ad_bakingapp"), (TransferListener<? super DataSource>) bandwidthMeter);
+
+        window = new Timeline.Window ();
 
         DisplayMetrics displaymetrics = new DisplayMetrics ();
         getActivity ().getWindowManager ().getDefaultDisplay ().getMetrics (displaymetrics);
         screenHeight = displaymetrics.heightPixels;
         screenWidth = displaymetrics.widthPixels;
-
-        mediaDataSourceFactory = new DefaultDataSourceFactory(getContext (),
-                Util.getUserAgent(getContext (), "ad_bakingapp"), (TransferListener<? super DataSource>) BANDWIDTH_METER);
     }
 
 
@@ -147,9 +170,7 @@ public class RecipeInstructionFragment extends Fragment {
         if (stepUrl.isEmpty ()) {
             mPlayerView.setVisibility (View.GONE);
         } else {
-            initializePlayer (step.getStepVideoUrl ());
-            //vvStepVideo.setVideoURI (Uri.parse (step.getStepVideoUrl ()));
-
+            initializePlayer ();
         }
 
         if (step.getStepId () == 0) {
@@ -163,12 +184,46 @@ public class RecipeInstructionFragment extends Fragment {
         }
     }
 
+    private void initializePlayer() {
+        mPlayerView.requestFocus ();
+
+        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory (bandwidthMeter);
+        trackSelector = new DefaultTrackSelector (videoTrackSelectionFactory);
+        player = ExoPlayerFactory.newSimpleInstance (getContext (), trackSelector);
+        mPlayerView.setPlayer (player);
+
+        player.setPlayWhenReady (shouldAutoPlay);
+        MediaSource mediaSource = new ExtractorMediaSource.Factory (mediaDataSourceFactory).createMediaSource (Uri.parse(step.getStepVideoUrl ()));
+
+        boolean haveStartPosition = currentWindow != C.INDEX_UNSET;
+        if (haveStartPosition) {
+            player.seekTo (currentWindow, playbackPosition);
+        }
+
+        player.prepare (mediaSource, !haveStartPosition, false);
+    }
+
+    private void releasePlayer() {
+        if (player != null) {
+            updateStartPosition();
+            shouldAutoPlay = player.getPlayWhenReady();
+            player.release();
+            player = null;
+            trackSelector = null;
+        }
+    }
+
+    private void updateStartPosition() {
+        playbackPosition = player.getCurrentPosition();
+        currentWindow = player.getCurrentWindowIndex();
+        playWhenReady = player.getPlayWhenReady();
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        hideSystemUi();
         if ((Util.SDK_INT <= 23 || player == null)) {
-            initializePlayer(step.getStepVideoUrl ());
+            initializePlayer();
         }
     }
 
@@ -186,47 +241,5 @@ public class RecipeInstructionFragment extends Fragment {
         if (Util.SDK_INT > 23) {
             releasePlayer();
         }
-    }
-
-    /**
-     * Initialize ExoPlayer.
-     */
-    private void initializePlayer(String stepVideoUrl) {
-        if (player == null) {
-            // a factory to create an AdaptiveVideoTrackSelection
-            TrackSelection.Factory adaptiveTrackSelectionFactory =
-                    new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
-            // using a DefaultTrackSelector with an adaptive video selection factory
-            player = ExoPlayerFactory.newSimpleInstance(new DefaultRenderersFactory(getContext ()),
-                    new DefaultTrackSelector(adaptiveTrackSelectionFactory), new DefaultLoadControl());
-            player.addListener(componentListener);
-            mPlayerView.setPlayer(player);
-            player.setPlayWhenReady(playWhenReady);
-            player.seekTo(currentWindow, playbackPosition);
-        }
-        MediaSource mediaSource = new ExtractorMediaSource.Factory (mediaDataSourceFactory).createMediaSource (Uri.parse(step.getStepVideoUrl ()));
-
-        player.prepare(mediaSource, true, false);
-    }
-
-    private void releasePlayer() {
-        if (player != null) {
-            playbackPosition = player.getCurrentPosition();
-            currentWindow = player.getCurrentWindowIndex();
-            playWhenReady = player.getPlayWhenReady();
-            player.removeListener(componentListener);
-            player.release();
-            player = null;
-        }
-    }
-
-    @SuppressLint("InlinedApi")
-    private void hideSystemUi() {
-        mPlayerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
     }
 }
