@@ -192,8 +192,8 @@ public class RecipeInstructionFragment extends Fragment {
         trackSelector = new DefaultTrackSelector (videoTrackSelectionFactory);
         player = ExoPlayerFactory.newSimpleInstance (getContext (), trackSelector);
         mPlayerView.setPlayer (player);
-
-        player.setPlayWhenReady (shouldAutoPlay);
+        player.setPlayWhenReady (playWhenReady);
+        //player.setPlayWhenReady (shouldAutoPlay);
         MediaSource mediaSource = new ExtractorMediaSource.Factory (mediaDataSourceFactory).createMediaSource (Uri.parse(stepUrl));
 
         boolean haveStartPosition = currentWindow != C.INDEX_UNSET;

@@ -125,19 +125,12 @@ public class RecipeDetailFragment extends Fragment{
     private void setUpIngredientsRecyclerView() {
         mIngredientLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
         mIngredientsRecyclerView.setLayoutManager (mIngredientLayoutManager);
-        mIngredientsRecyclerView.setVisibility(View.GONE);
 
         mIngredientsAdapter = new IngredientsAdapter (recipe.getIngredients (), getContext ());
         mIngredientsRecyclerView.setAdapter (mIngredientsAdapter);
         mIngredientsRecyclerView.setNestedScrollingEnabled (false);
 
-        cvIngredients.setOnClickListener(v -> {
-            if (mIngredientsRecyclerView.getVisibility () == View.VISIBLE) {
-                mIngredientsRecyclerView.setVisibility(View.GONE);
-            } else {
-                mIngredientsRecyclerView.setVisibility(View.VISIBLE);
-            }
-        });
+
     }
     private void setUpStepsRecyclerView() {
         mStepLayoutManager = new LinearLayoutManager (getActivity ().getApplicationContext ());
