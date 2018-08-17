@@ -159,9 +159,10 @@ public class RecipeInstructionFragment extends Fragment {
         if (stepUrl.isEmpty ()) {
             mPlayerView.setVisibility (View.GONE);
         } else {
+            boolean tabletSize = getResources().getBoolean(R.bool.isTablet);
             initializePlayer (stepUrl);
             // Check orientation of the screen and set height of videoView accordingly
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE && !tabletSize)  {
 
                 // get layout parameters for that view
                 ViewGroup.LayoutParams params = mPlayerView.getLayoutParams();

@@ -39,9 +39,9 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         String measureType = ingredients.get(position).getIngredientsMeasureType ();
         String ingredientName = ingredients.get(position).getIngredientsName ();
 
-        holder.ingredientQuantityTV.setText (String.valueOf (quantity));
-        holder.ingredientMeasureTV.setText (measureType);
-        holder.ingredientNameTV.setText (ingredientName);
+        String ingredientItem = "• " + String.valueOf (quantity) + " " + measureType + " " + ingredientName;
+
+        holder.ingredientItemTV.setText (ingredientItem);
     }
 
     @Override
@@ -53,9 +53,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.ingredientQuantityTextView) TextView ingredientQuantityTV;
-        @BindView (R.id.ingredientNameTextView) TextView ingredientNameTV;
-        @BindView (R.id.ingredientMeasureTextView) TextView ingredientMeasureTV;
+        @BindView(R.id.ingredientItemTextView) TextView ingredientItemTV;
 
         public ViewHolder(ConstraintLayout itemView) {
             super (itemView);
